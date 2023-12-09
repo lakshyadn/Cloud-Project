@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(90deg, #192a56, #2c3e50, #34495e, #2c3e50, #192a56);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+        }
+        section {
+            margin: 20px;
+            background-color: #f0f0f0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            overflow-y: auto; /* Make the section scrollable */
+            max-height: 70vh; /* Set a maximum height */
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+        }
+        label {
+            margin-bottom: 0.5em;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            margin-bottom: 1em;
+            padding: 0.5em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 0.5em 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+        .totals {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #555;
+        }
+        .description {
+            color: #555;
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Personal Finance Tracker</h1>
+    </header>
+
+    <section>
+        <div class="description">
+            <p>Keep track of your finances with this easy-to-use Personal Finance Tracker. Record your income and expenditures, view totals, and analyze your financial status. Stay organized and in control of your financial goals.</p>
+        </div>
+        <form id="financeForm">
+            <label for="transactionType">Transaction Type:</label>
+            <select id="transactionType" name="transactionType" class="form-control" required>
+                <option value="income">Income</option>
+                <option value="expenditure">Expenditure</option>
+            </select>
+
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter amount" required>
+
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" class="form-control" placeholder="Enter category" required>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" class="form-control" required>
+
+            <button type="button" onclick="addTransaction()" class="btn btn-primary btn-block">Add Transaction</button>
+        </form>
+
+        <table id="transactionTable" class="table table-bordered table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Transaction entries will be inserted here -->
+            </tbody>
+        </table>
+
+        <div class="totals text-dark">
+            <p>Total Income: <span id="totalIncome">0</span></p>
+            <p>Total Expenditure: <span id="totalExpenditure">0</span></p>
+            <p>Net Gain/Loss: <span id="netGainLoss">0</span></p>
+        </div>
+<button type="button" onclick="generateReport()" class="btn btn-success btn-block mt-4">Generate Report</button>
+    </section>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function addTransaction() {
+            const transactionType = document.getElementById("transactionType").value;
+            const amount = document.getElementById("amount").value;
+            const category = document.getElementById("category").value;
+            const date = document.getElementById("date").value;
+
+            const table = document.getElementById("transactionTable").getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow(table.rows.length);
+
+            const typeCell = newRow.insertCell(0);
+            const amountCell = newRow.insertCell(1);
+            const categoryCell = newRow.insertCell(2);
+            const dateCell = newRow.insertCell(3);
+
+            typeCell.textContent = transactionType.charAt(0).toUpperCase() + transactionType.slice(1);
+            amountCell.textContent = amount;
+            categoryCell.textContent = category;
+            dateCell.textContent = date;
+
+            // Update totals
+            updateTotals();
+
+            // Clear input fields
+            document.getElementById("amount").value = "";
+            document.getElementById("category").value = "";
+            document.getElementById("date").value = "";
+        }
+
+        function updateTotals() {
+            const table = document.getElementById("transactionTable").getElementsByTagName('tbody')[0];
+            const rows = table.getElementsByTagName('tr');
+
+            let totalIncome = 0;
+            let totalExpenditure = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const amount = parseFloat(cells[1].textContent);
+
+                if (cells[0].textContent.toLowerCase() === 'income') {
+                    totalIncome += amount;
+                } else if (cells[0].textContent.toLowerCase() === 'expenditure') {
+                    totalExpenditure += amount;
+                }
+            }
+
+            const netGainLoss = totalIncome - totalExpenditure;
+
+            document.getElementById("totalIncome").textContent = totalIncome.toFixed(2);
+            document.getElementById("totalExpenditure").textContent = totalExpenditure.toFixed(2);
+            document.getElementById("netGainLoss").textContent = netGainLoss.toFixed(2);
+        }
+	function generateReport() {
+            // You can add logic here to generate and display a financial report.
+            // For simplicity, let's just log a message to the console.
+            console.log("Generating financial report...");
+    </script>
+
+</body>
+</html>
+
